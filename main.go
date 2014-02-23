@@ -2,9 +2,9 @@ package main
 
 // open proxy crawler
 
-import "net/http"
-import "net/url"
-import "fmt"
+import( "net/http"
+	"net/url"
+	"fmt" )
 
 func pageHandler( w http.ResponseWriter, r *http.Request ){
   filePath := "./public" + r.RequestURI
