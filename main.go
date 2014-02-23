@@ -22,10 +22,12 @@ func pageHandler( w http.ResponseWriter, r *http.Request ){
 }
 
 func crawl() {
-  fmt.Println( "i'm crawling the world" )
+  //fmt.Println( "i'm crawling the world" )
+  semaphore := make( chan bool, 5 )
   for {
+    semaphore <- true
     someProxy := randomIp()+":3128"
-    fmt.Println( someProxy )
+    go testProxy( someProxy )
   }
 }
 
@@ -55,7 +57,7 @@ func main() {
 
   flag.Parse()
 
-  fmt.Println( "up and running!" )
+  //fmt.Println( "up and running!" )
   go crawl()  
   http.HandleFunc( "/", pageHandler )
   http.ListenAndServe( ":8000", nil )
