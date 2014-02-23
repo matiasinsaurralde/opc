@@ -3,8 +3,14 @@ package main
 // open proxy crawler
 
 import( "net/http"
+	"math/rand"
+	"strconv"
 	"net/url"
+	"time"
+	"flag"
 	"fmt" )
+
+var mode int
 
 func pageHandler( w http.ResponseWriter, r *http.Request ){
   filePath := "./public" + r.RequestURI
@@ -17,8 +23,10 @@ func pageHandler( w http.ResponseWriter, r *http.Request ){
 
 func crawl() {
   fmt.Println( "i'm crawling the world" )
-  someProxy := "201.217.55.97:3128"
-  testProxy( someProxy )
+  for {
+    someProxy := randomIp()+":3128"
+    fmt.Println( someProxy )
+  }
 }
 
 func testProxy(proxyAddress string) {
@@ -29,10 +37,26 @@ func testProxy(proxyAddress string) {
   fmt.Println( response )
 }
 
+func randomIp() string {
+  rand.Seed( time.Now().UnixNano() )
+  var someIp string = ""
+  for i := 0; i < 4; i++ {
+    n := rand.Intn(254)
+    someIp += strconv.Itoa( n )
+    if i < 3 {
+      someIp += "."
+    }
+  }
+  return someIp
+}
+
 func main() {
+  flag.Int( "mode", 0, "Crazy crawl mode (default)" )
+
+  flag.Parse()
+
   fmt.Println( "up and running!" )
-  go crawl()
+  go crawl()  
   http.HandleFunc( "/", pageHandler )
   http.ListenAndServe( ":8000", nil )
 }
-
